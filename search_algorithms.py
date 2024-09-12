@@ -8,6 +8,7 @@ def breadth_first_search(startState, action_list, goal_test, use_closed_list=Tru
     closed_list = {}
 
     search_queue.append((startState,""))
+    total_states = 1
     if use_closed_list :
         closed_list[startState] = True
     while len(search_queue) > 0 :
@@ -20,6 +21,7 @@ def breadth_first_search(startState, action_list, goal_test, use_closed_list=Tru
             while ptr is not None :
                 ptr = ptr.prev
                 print(ptr)
+            print("Total generated states:", total_states)
             return next_state
         else :
             successors = next_state[0].successors(action_list)
@@ -28,6 +30,7 @@ def breadth_first_search(startState, action_list, goal_test, use_closed_list=Tru
                                     if item[0] not in closed_list]
                 for s in successors :
                     closed_list[s[0]] = True
+            total_states += len(successors)
             search_queue.extend(successors)
 
 ### Note the similarity to BFS - the only difference is the search queue
@@ -38,6 +41,7 @@ def depth_first_search(startState, action_list, goal_test, use_closed_list=True,
     closed_list = {}
 
     search_queue.append((startState,""))
+    total_states = 1
     if use_closed_list :
         closed_list[startState] = True
     while len(search_queue) > 0 :
@@ -50,6 +54,7 @@ def depth_first_search(startState, action_list, goal_test, use_closed_list=True,
             while ptr is not None :
                 ptr = ptr.prev
                 print(ptr)
+            print("Total generated states:", total_states)
             return next_state
         else :
             successors = next_state[0].successors(action_list)
@@ -58,10 +63,8 @@ def depth_first_search(startState, action_list, goal_test, use_closed_list=True,
                                     if item[0] not in closed_list]
                 for s in successors :
                     closed_list[s[0]] = True
+            total_states += len(successors)
             search_queue.extend(successors)
 
 ## add iterative deepening search here
 
-
-
-f

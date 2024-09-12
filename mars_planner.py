@@ -15,6 +15,7 @@
 
 from copy import deepcopy
 from search_algorithms import breadth_first_search
+from search_algorithms import depth_first_search
 
 class RoverState :
     def __init__(self, loc="station", sample_extracted=False, holding_sample=False, charged=False):
@@ -26,10 +27,10 @@ class RoverState :
 
     ## you do this.
     def __eq__(self, other):
-       return (self.loc == other.loc) and 
-                       (self.sample_extracted == other.sample_extracted) and
-                       (self.holding_sample == other.holding_sample) and 
-                       (self.charged == other.charged)
+       return self.loc == other.loc and (
+       (self.sample_extracted == other.sample_extracted) and
+       (self.holding_sample == other.holding_sample) and
+       (self.charged == other.charged))
 
 
     def __repr__(self):
@@ -103,15 +104,18 @@ def battery_goal(state) :
 ## add your goals here.
 
 def mission_complete(state) :
-    return (state.loc == "battery") and 
+    return state.loc == "battery" and (
             (state.charged == True) and
-            (state.sample_extracted == True)
+            (state.sample_extracted == True))
 
 
 if __name__=="__main__" :
+    # s = RoverState(loc="battery", sample_extracted=True, charged=True)
     s = RoverState()
-    result = breadth_first_search(s, action_list, mission_complete)
-    print(result)
+    bfs_result = breadth_first_search(s, action_list, battery_goal)
+    dfs_result = depth_first_search(s, action_list, mission_complete)
+    print("BFS result:", bfs_result)
+    print("DFS result:", dfs_result)
 
 
 
