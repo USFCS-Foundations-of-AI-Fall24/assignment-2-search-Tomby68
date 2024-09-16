@@ -16,6 +16,8 @@
 from copy import deepcopy
 from search_algorithms import breadth_first_search
 from search_algorithms import depth_first_search
+from search_algorithms import iterative_deepening_search
+from search_algorithms import subproblem_search
 
 class RoverState :
     def __init__(self, loc="station", sample_extracted=False, holding_sample=False, charged=False, holding_tool=False):
@@ -44,7 +46,7 @@ class RoverState :
     def __hash__(self):
         return self.__repr__().__hash__()
 
-    def successors(self, list_of_actions, limit=0):
+    def successors(self, list_of_actions, limit=0, states_generated=0):
 
         ## apply each function in the list of actions to the current state to get
         ## a new state.
@@ -53,9 +55,16 @@ class RoverState :
         ## remove actions that have no effect
 
         succ = [item for item in succ if not item[0] == self]
-        if limit > 0 and limit <= len(succ) :
-            succ = succ[:limit]
+        if limit > 0 and (len(succ) + states_generated) > limit :
+            return succ[:limit - states_generated]
         return succ
+
+# Say:
+# states_generated = 5
+# limit = 7
+# len(succ = 3)
+# Want to add just 2, so return succ[:2]
+# return succ[:limit - states_generated]
 
 ## our actions will be functions that return a new state.
 
@@ -121,31 +130,36 @@ action_list = [charge, drop_sample, pick_up_sample,
                move_to_sample, move_to_battery, move_to_station,
                pick_up_tool, drop_tool, use_tool]
 
-def battery_goal(state) :
-    return state.loc == "battery"
+def returnToCharger(state) :
+    return state.loc == "battery" and state.charged == True
 ## add your goals here.
 
-def charged_goal(state) : 
-    return state.charged == True
+def moveToSample(state):
+    return state.loc == "sample"
 
-def extracted_goal(state) :
+def removeSample(state):
     return state.sample_extracted == True
 
 #def holding_goal(state) : 
 #    return state.holding_sample == False
 
 def mission_complete(state) :
-    return battery_goal(state) and charged_goal(state) and extracted_goal(state)
+    return returnToCharger(state) and removeSample(state)
 
 if __name__=="__main__" :
+    limit = 20
     s = RoverState()
     #s = RoverState()
-    bfs_result, states = breadth_first_search(s, action_list, mission_complete)
-    print("Total states:", states)
-    dfs_result, states = depth_first_search(s, action_list, mission_complete, limit=1)
-    print("Total states:", states)
-    print("BFS result:", bfs_result)
-    print("DFS result:", dfs_result)
-
-
-
+    bfs_result, bfs_states = breadth_first_search(s, action_list, mission_complete)
+    dfs, dfs_states = depth_first_search(s, action_list, mission_complete)
+    dfs_result, dfs_lim_states = depth_first_search(s, action_list, mission_complete, limit=limit)
+    #print("BFS result:", bfs_result)
+    #print("DFS result:", dfs_result)
+    ids_result, ids_states = iterative_deepening_search(s, action_list, mission_complete, maxLimit=limit)
+    #print("IDS result:", ids_result)
+    decomp_result, decomp_states = subproblem_search(breadth_first_search, [moveToSample, removeSample, returnToCharger], s, action_list)
+    print(f"BFS states: {bfs_states}")
+    print(f"DFS states: {dfs_states}")
+    print(f"DFS with limit={limit} states: {dfs_lim_states}")
+    print(f"IDS with maxLimit={limit} states: {ids_states}")
+    print(f"Decomposition states (with BFS): {decomp_states}")
