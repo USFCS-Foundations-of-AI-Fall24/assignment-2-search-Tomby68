@@ -21,8 +21,7 @@ def breadth_first_search(startState, action_list, goal_test, use_closed_list=Tru
             while ptr is not None :
                 ptr = ptr.prev
                 print(ptr)
-            print("Total generated states:", total_states)
-            return next_state
+            return next_state, total_states
         else :
             successors = next_state[0].successors(action_list)
             if use_closed_list :
@@ -32,6 +31,8 @@ def breadth_first_search(startState, action_list, goal_test, use_closed_list=Tru
                     closed_list[s[0]] = True
             total_states += len(successors)
             search_queue.extend(successors)
+
+    return None, None
 
 ### Note the similarity to BFS - the only difference is the search queue
 
@@ -54,10 +55,9 @@ def depth_first_search(startState, action_list, goal_test, use_closed_list=True,
             while ptr is not None :
                 ptr = ptr.prev
                 print(ptr)
-            print("Total generated states:", total_states)
-            return next_state
+            return next_state, total_states
         else :
-            successors = next_state[0].successors(action_list)
+            successors = next_state[0].successors(action_list, limit)
             if use_closed_list :
                 successors = [item for item in successors
                                     if item[0] not in closed_list]
@@ -65,6 +65,14 @@ def depth_first_search(startState, action_list, goal_test, use_closed_list=True,
                     closed_list[s[0]] = True
             total_states += len(successors)
             search_queue.extend(successors)
+    return None, None
 
 ## add iterative deepening search here
-
+def iterative_deepening_search(startState, action_list, goal_test, use_closed_list=True, maxLimit=0) :
+    result = None
+    total_states = 0
+    for i in range(1, maxLimit + 1):
+        if result == None:
+            result, states = depth_first_search(startState, action_list, goal_test, use_closed_list, maxLimit)
+            total_states += states
+    
