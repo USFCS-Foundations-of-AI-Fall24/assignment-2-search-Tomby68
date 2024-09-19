@@ -44,6 +44,7 @@ def a_star(start_state, heuristic_fn, goal_test, use_closed_list=True) :
     search_queue.put(start_state)
     total_states = 1
     mars_graph = start_state.mars_graph
+    next_state = None
     
     while search_queue:
         next_state = search_queue.get()
@@ -57,9 +58,11 @@ def a_star(start_state, heuristic_fn, goal_test, use_closed_list=True) :
             if edge.dest not in closed_list:
                 new_state = map_state(location=edge.dest, mars_graph=mars_graph, 
                 prev_state=next_state, g=next_state.g+1, h=heuristic_fn(edge.dest))
+                #print(new_state.location, ": f=", new_state.f, " g=", new_state.g, " h=", new_state.h, sep="")
                 search_queue.put(new_state)
                 total_states += 1
     print("Total states generated:", total_states)
+    return next_state
 #    print("all states generated: ")
 #    for location, state in closed_list.items():
 #        print(state)
@@ -102,8 +105,18 @@ def read_mars_graph(filename):
 if __name__ == "__main__":
     mars_graph = read_mars_graph("MarsMap")
     start_state = map_state(location="8,8", mars_graph=mars_graph, g=0, h=sld("8,8"))
-    #print(start_state)
-    a_star(start_state, sld, goal_test)
-    start_state = map_state(location="8,8", mars_graph=mars_graph, g=0, h=h1("8,8"))
-    a_star(start_state, h1, goal_test)
+    print("For sld, ", end="")
+    sld_state = a_star(start_state, sld, goal_test)
+    
+    start_state = map_state(location="8,8", mars_graph=mars_graph, g=0)
+    print("For UCS, ", end="")
+    sld_state = a_star(start_state, h1, goal_test)
+    '''
+    final_path = []
+    while sld_state is not None:
+        final_path.append(sld_state.location)
+        sld_state = sld_state.prev_state
+    final_path.reverse()
+    print(final_path)
+    '''
         
