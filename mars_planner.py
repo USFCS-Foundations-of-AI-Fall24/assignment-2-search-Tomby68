@@ -146,7 +146,7 @@ def removeSample(state):
 def mission_complete(state) :
     return returnToCharger(state) and removeSample(state)
 
-if __name__=="__main__" :
+def main():
     limit = 20
     s = RoverState()
     #s = RoverState()
@@ -163,3 +163,6 @@ if __name__=="__main__" :
     print(f"DFS with limit={limit} states: {dfs_lim_states}")
     print(f"IDS with maxLimit={limit} states: {ids_states}")
     print(f"Decomposition states (with BFS): {decomp_states}")
+
+if __name__=="__main__" :
+    main()

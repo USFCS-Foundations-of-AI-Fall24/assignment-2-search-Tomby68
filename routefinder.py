@@ -58,14 +58,10 @@ def a_star(start_state, heuristic_fn, goal_test, use_closed_list=True) :
             if edge.dest not in closed_list:
                 new_state = map_state(location=edge.dest, mars_graph=mars_graph, 
                 prev_state=next_state, g=next_state.g+1, h=heuristic_fn(edge.dest))
-                #print(new_state.location, ": f=", new_state.f, " g=", new_state.g, " h=", new_state.h, sep="")
                 search_queue.put(new_state)
                 total_states += 1
     print("Total states generated:", total_states)
     return next_state
-#    print("all states generated: ")
-#    for location, state in closed_list.items():
-#        print(state)
 
 
 ## default heuristic - we can use this to implement uniform cost search
@@ -101,22 +97,18 @@ def read_mars_graph(filename):
         print(e)
     return mars_graph
 
-
-if __name__ == "__main__":
+def main():
     mars_graph = read_mars_graph("MarsMap")
-    start_state = map_state(location="4,4", mars_graph=mars_graph, g=0, h=sld("4,4"))
+    start_location = "4,4"
+    print(f"STARTING FROM %s" % start_location)
+    start_state = map_state(location=start_location, mars_graph=mars_graph, g=0, h=sld(start_location))
     print("For sld, ", end="")
     sld_state = a_star(start_state, sld, goal_test)
     
-    start_state = map_state(location="4,4", mars_graph=mars_graph, g=0)
+    start_state = map_state(location=start_location, mars_graph=mars_graph, g=0)
     print("For UCS, ", end="")
-    sld_state = a_star(start_state, h1, goal_test)
-    '''
-    final_path = []
-    while sld_state is not None:
-        final_path.append(sld_state.location)
-        sld_state = sld_state.prev_state
-    final_path.reverse()
-    print(final_path)
-    '''
+    ucs_state = a_star(start_state, h1, goal_test)
+
         
+if __name__ == "__main__":
+    main()
