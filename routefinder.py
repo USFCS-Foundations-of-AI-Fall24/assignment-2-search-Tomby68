@@ -104,11 +104,11 @@ def read_mars_graph(filename):
 
 if __name__ == "__main__":
     mars_graph = read_mars_graph("MarsMap")
-    start_state = map_state(location="8,8", mars_graph=mars_graph, g=0, h=sld("8,8"))
+    start_state = map_state(location="4,4", mars_graph=mars_graph, g=0, h=sld("4,4"))
     print("For sld, ", end="")
     sld_state = a_star(start_state, sld, goal_test)
     
-    start_state = map_state(location="8,8", mars_graph=mars_graph, g=0)
+    start_state = map_state(location="4,4", mars_graph=mars_graph, g=0)
     print("For UCS, ", end="")
     sld_state = a_star(start_state, h1, goal_test)
     '''
